@@ -44,8 +44,8 @@ func main() {
 	memory[pc+5] = 0x4F
 	memory[pc+6] = 0x62
 	memory[pc+7] = 0x35
-	memory[pc+8] = 0x6F
-	memory[pc+9] = 0x35
+	memory[pc+8] = 0x72
+	memory[pc+9] = 0x32
 
 	for {
 		opscode := uint(memory[pc])<<8 | uint(memory[pc+1])
@@ -66,6 +66,12 @@ func main() {
 			v[x] = byte(opsval)
 
 			fmt.Printf("Setting V%d to 0x%X\n", x, opsval)
+		case 0x7000:
+			x := uint(memory[pc]) & 0x0F
+			opsval = uint(memory[pc+1])
+			v[x] += byte(opsval)
+
+			fmt.Printf("Adding 0x%X to V%d, now 0x%X\n", opsval, x, v[x])
 		}
 
 		pc += 2
