@@ -33,6 +33,10 @@ func main() {
 	// load program
 	memory[pc] = 0xA2
 	memory[pc+1] = 0xF0
+	memory[pc+2] = 0xA2
+	memory[pc+3] = 0xF1
+	memory[pc+4] = 0x12
+	memory[pc+5] = 0x00
 
 	for {
 		fmt.Printf("I: 0x%X\t\tPC: 0x%X\n", i, pc)
@@ -43,6 +47,9 @@ func main() {
 		switch opscode & 0xF000 {
 		case 0xA000:
 			i = opsval
+		case 0x1000:
+			pc = opsval
+			continue
 		}
 
 		pc += 2
