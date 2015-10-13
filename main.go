@@ -8,8 +8,8 @@ import (
 
 func main() {
 	// registers
-	// var v = make([]byte, 16)
-	var i uint        // 0x000 - 0xFFF
+	var v = make([]byte, 16)
+	var i uint = 0x0  // 0x000 - 0xFFF
 	var pc uint = 0x0 // 0x000 - 0xFFF 2 bytes
 
 	// timers
@@ -30,26 +30,42 @@ func main() {
 	// reset timers
 	pc = 0x200
 
+	// clear
+	for x, _ := range v {
+		v[x] = 0
+	}
+
 	// load program
 	memory[pc] = 0xA2
 	memory[pc+1] = 0xF0
 	memory[pc+2] = 0xA2
-	memory[pc+3] = 0xF1
-	memory[pc+4] = 0x12
-	memory[pc+5] = 0x00
+	memory[pc+3] = 0xF5
+	memory[pc+4] = 0x61
+	memory[pc+5] = 0x4F
+	memory[pc+6] = 0x62
+	memory[pc+7] = 0x35
+	memory[pc+8] = 0x6F
+	memory[pc+9] = 0x35
 
 	for {
-		fmt.Printf("I: 0x%X\t\tPC: 0x%X\n", i, pc)
-
 		opscode := uint(memory[pc])<<8 | uint(memory[pc+1])
 		opsval := opscode & 0x0FFF
 
 		switch opscode & 0xF000 {
 		case 0xA000:
+			previous := i
 			i = opsval
+
+			fmt.Printf("Setting I from 0x%X to 0x%X - %x\n", previous, opsval, i)
 		case 0x1000:
 			pc = opsval
 			continue
+		case 0x6000:
+			x := uint(memory[pc]) & 0x0F
+			opsval = uint(memory[pc+1])
+			v[x] = byte(opsval)
+
+			fmt.Printf("Setting V%d to 0x%X\n", x, opsval)
 		}
 
 		pc += 2
