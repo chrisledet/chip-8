@@ -64,6 +64,9 @@ func main() {
 	memory[pc+16] = 0x62
 	memory[pc+17] = 0x35
 
+	memory[pc+18] = 0x83
+	memory[pc+19] = 0x10
+
 	for {
 		opscode := memory[pc]<<8 | memory[pc+1]
 		opsval := opscode & 0x0FFF
@@ -127,6 +130,12 @@ func main() {
 			v[x] += byte(opsval)
 
 			fmt.Printf("CMD: add 0x%X to V%d\n", opsval, x)
+		case 0x8000:
+			x := memory[pc] & 0x0F
+			y := memory[pc+1] / 0x10
+
+			fmt.Printf("CMD: set V%d (0x%X) to V%d (0x%X)\n", x, v[x], y, v[y])
+			v[x] = v[y]
 		}
 
 		pc += 2
