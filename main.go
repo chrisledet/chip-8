@@ -17,10 +17,10 @@ func main() {
 	// var soundTimer int
 
 	// storage
-	var memory = make([]byte, 4096)
+	var memory = make([]uint, 4096)
 	// var key = make([]uint, 16)
-	// var stack = make([]uint, 16)
-	// var sp uint
+	var stack = make([]uint, 16)
+	var sp byte
 
 	// 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 	// 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
@@ -31,6 +31,7 @@ func main() {
 	pc = 0x200
 
 	// clear
+	sp = 0
 	for x, _ := range v {
 		v[x] = 0
 	}
@@ -46,32 +47,53 @@ func main() {
 	memory[pc+7] = 0x35
 	memory[pc+8] = 0x72
 	memory[pc+9] = 0x32
+	memory[pc+10] = 0x22
+	memory[pc+11] = 0x0C
+	memory[pc+12] = 0x00
+	memory[pc+13] = 0xEE
 
 	for {
-		opscode := uint(memory[pc])<<8 | uint(memory[pc+1])
+		opscode := memory[pc]<<8 | memory[pc+1]
 		opsval := opscode & 0x0FFF
+
+		if opscode == 0x00EE {
+			if sp > 0 {
+				pc = stack[sp-1]
+				sp--
+				fmt.Printf("CMD: subroutine return to address 0x%X\n", pc)
+			} else {
+				fmt.Printf("ERROR: invalid subroutine return at address 0x%X\n", pc)
+			}
+
+			pc += 2
+			continue
+		}
 
 		switch opscode & 0xF000 {
 		case 0xA000:
-			previous := i
 			i = opsval
-
-			fmt.Printf("Setting I from 0x%X to 0x%X - %x\n", previous, opsval, i)
+			fmt.Printf("CMD: set register I to 0x%X\n", i)
 		case 0x1000:
 			pc = opsval
 			continue
+		case 0x2000: // Calls subroutine at NNN.
+			stack[sp] = pc
+			sp++
+			pc = opsval
+			fmt.Printf("CMD: jump to subroutine at address 0x%X\n", opsval)
+			continue
 		case 0x6000:
-			x := uint(memory[pc]) & 0x0F
-			opsval = uint(memory[pc+1])
+			x := memory[pc] & 0x0F
+			opsval = memory[pc+1]
 			v[x] = byte(opsval)
 
-			fmt.Printf("Setting V%d to 0x%X\n", x, opsval)
+			fmt.Printf("CMD: set V%d to 0x%X\n", x, opsval)
 		case 0x7000:
-			x := uint(memory[pc]) & 0x0F
-			opsval = uint(memory[pc+1])
+			x := memory[pc] & 0x0F
+			opsval = memory[pc+1]
 			v[x] += byte(opsval)
 
-			fmt.Printf("Adding 0x%X to V%d, now 0x%X\n", opsval, x, v[x])
+			fmt.Printf("CMD: add 0x%X to V%d\n", opsval, x)
 		}
 
 		pc += 2
