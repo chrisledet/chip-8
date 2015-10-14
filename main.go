@@ -76,9 +76,6 @@ func main() {
 			} else {
 				fmt.Printf("ERROR: invalid subroutine return at address 0x%X\n", pc)
 			}
-
-			pc += 2
-			continue
 		}
 
 		switch opscode & 0xF000 {
