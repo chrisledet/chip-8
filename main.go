@@ -44,7 +44,7 @@ func main() {
 	memory[pc+3] = 0xF5
 
 	memory[pc+4] = 0x61
-	memory[pc+5] = 0x4F
+	memory[pc+5] = 0x67
 
 	memory[pc+6] = 0x62
 	memory[pc+7] = 0x35
@@ -58,8 +58,8 @@ func main() {
 	memory[pc+12] = 0x00
 	memory[pc+13] = 0xEE
 
-	memory[pc+14] = 0x41
-	memory[pc+15] = 0x4C
+	memory[pc+14] = 0x51
+	memory[pc+15] = 0x20
 
 	memory[pc+16] = 0x62
 	memory[pc+17] = 0x35
@@ -105,6 +105,14 @@ func main() {
 
 			fmt.Printf("CMD: skip next instruction if V%d (0x%X) != 0x%X\n", x, v[x], nn)
 			if v[x] != byte(nn) {
+				pc += 2
+			}
+		case 0x5000:
+			x := memory[pc] & 0x0F
+			y := memory[pc+1] / 0x10
+
+			fmt.Printf("CMD: skip next instruction if V%d (0x%X) != V%d (0x%X)\n", x, v[x], y, v[y])
+			if v[x] == v[y] {
 				pc += 2
 			}
 		case 0x6000:
