@@ -39,18 +39,30 @@ func main() {
 	// load program
 	memory[pc] = 0xA2
 	memory[pc+1] = 0xF0
+
 	memory[pc+2] = 0xA2
 	memory[pc+3] = 0xF5
+
 	memory[pc+4] = 0x61
 	memory[pc+5] = 0x4F
+
 	memory[pc+6] = 0x62
 	memory[pc+7] = 0x35
+
 	memory[pc+8] = 0x72
 	memory[pc+9] = 0x32
+
 	memory[pc+10] = 0x22
 	memory[pc+11] = 0x0C
+
 	memory[pc+12] = 0x00
 	memory[pc+13] = 0xEE
+
+	memory[pc+14] = 0x31
+	memory[pc+15] = 0x4F
+
+	memory[pc+16] = 0x62
+	memory[pc+17] = 0x35
 
 	for {
 		opscode := memory[pc]<<8 | memory[pc+1]
@@ -82,6 +94,14 @@ func main() {
 			pc = opsval
 			fmt.Printf("CMD: jump to subroutine at address 0x%X\n", opsval)
 			continue
+		case 0x3000:
+			x := memory[pc] & 0x0F
+			nn := memory[pc+1]
+
+			fmt.Printf("CMD: skip next instruction if V%d (0x%X) = 0x%X\n", x, v[x], nn)
+			if v[x] == byte(nn) {
+				pc += 2
+			}
 		case 0x6000:
 			x := memory[pc] & 0x0F
 			opsval = memory[pc+1]
