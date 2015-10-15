@@ -9,17 +9,17 @@ import (
 func main() {
 	// registers
 	var v = make([]byte, 16)
-	var i uint = 0x0  // 0x000 - 0xFFF
-	var pc uint = 0x0 // 0x000 - 0xFFF 2 bytes
+	var i uint16 = 0x0  // 0x000 - 0xFFF
+	var pc uint16 = 0x0 // 0x000 - 0xFFF 2 bytes
 
 	// timers
 	// var delayTimer int
 	// var soundTimer int
 
 	// storage
-	var memory = make([]uint, 4096)
-	// var key = make([]uint, 16)
-	var stack = make([]uint, 16)
+	var memory = make([]uint16, 4096)
+	// var key = make([]uint16, 16)
+	var stack = make([]uint16, 16)
 	var sp byte
 
 	// 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
