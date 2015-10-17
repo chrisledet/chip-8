@@ -4,6 +4,10 @@ all: clean
 	@echo "-> Running..."
 	@./c8vm
 
+test:
+	@echo "-> Testing..."
+	@go test ./...
+
 clean:
 	@echo "-> Cleaning..."
 	@rm -f ./c8vm
