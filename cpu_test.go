@@ -142,6 +142,47 @@ func Test0x8XY4WithCarry(t *testing.T) {
 	}
 }
 
+// 8XY5 - VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+func Test0x8XY5(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0xFF, // set V0 to 0xFF
+		0x61, 0x0F, // set V1 to 0x0F
+		0x80, 0x15,
+	}
+
+	cpu.Load(program)
+
+	expected = 0xF0
+	if cpu.v[0] != expected {
+		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
+	}
+}
+
+// 8XY5 - VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+func Test0x8XY5WithCarry(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0x0F, // set V0 to 0xFF
+		0x61, 0xFF, // set V1 to 0x0F
+		0x80, 0x15,
+	}
+
+	cpu.Load(program)
+
+	expected = 0x0F
+	if cpu.v[0] != expected {
+		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
+	}
+
+	expected = 0x1
+	if cpu.v[0xf] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
+	}
+}
+
 // 8XY6 - Shifts VX right by one.
 // 				VF is set to the value of the least significant bit of VX before the shift.
 func Test0x8XY6(t *testing.T) {

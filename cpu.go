@@ -138,6 +138,16 @@ func (cpu *CPU) execute() error {
 			} else {
 				cpu.v[CarryFlag] = 0x0
 			}
+		} else if cond == 0x5 {
+			result := int16(cpu.v[x]) - int16(cpu.v[y])
+
+			if result < 0 {
+				cpu.v[x] = byte(result + 0xFF)
+				cpu.v[CarryFlag] = 0x1
+			} else {
+				cpu.v[x] = byte(result)
+				cpu.v[CarryFlag] = 0x0
+			}
 		}
 	}
 
