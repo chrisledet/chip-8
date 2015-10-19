@@ -8,7 +8,6 @@ import (
 const (
 	StartAddress   int  = 0x200
 	MaxProgramSize int  = 0xFFF - StartAddress
-	CarryFlag      byte = 0xF
 	RegisterCount  byte = 0x10
 	StackSize      byte = 0x10
 )
@@ -134,20 +133,23 @@ func (cpu *CPU) execute() error {
 			result := uint16(cpu.v[x]) + uint16(cpu.v[y])
 
 			if result > 0xFF {
-				cpu.v[CarryFlag] = 0x1
+				cpu.v[0xF] = 0x1
 			} else {
-				cpu.v[CarryFlag] = 0x0
+				cpu.v[0xF] = 0x0
 			}
 		} else if cond == 0x5 {
 			result := int16(cpu.v[x]) - int16(cpu.v[y])
 
 			if result < 0 {
 				cpu.v[x] = byte(result + 0xFF)
-				cpu.v[CarryFlag] = 0x1
+				cpu.v[0xF] = 0x1
 			} else {
 				cpu.v[x] = byte(result)
-				cpu.v[CarryFlag] = 0x0
+				cpu.v[0xF] = 0x0
 			}
+		} else if cond == 0x6 {
+			cpu.v[0xF] = cpu.v[x] & 0xF
+			cpu.v[x] = cpu.v[x] >> 1
 		}
 	}
 

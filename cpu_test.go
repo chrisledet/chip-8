@@ -183,8 +183,24 @@ func Test0x8XY5WithCarry(t *testing.T) {
 	}
 }
 
-// 8XY6 - Shifts VX right by one.
-// 				VF is set to the value of the least significant bit of VX before the shift.
+// 8XY6 - Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
 func Test0x8XY6(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0xF1, // set V0 to 0xFF
+		0x80, 0x16,
+	}
 
+	cpu.Load(program)
+
+	expected = 0x78
+	if cpu.v[0] != expected {
+		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
+	}
+
+	expected = 0x1
+	if cpu.v[0xf] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
+	}
 }
