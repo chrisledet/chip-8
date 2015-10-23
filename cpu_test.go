@@ -204,3 +204,44 @@ func Test0x8XY6(t *testing.T) {
 		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
 	}
 }
+
+// Sets VX to VY minus VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
+func Test0x8XY7(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0x01, // set V0 to 0x01
+		0x61, 0xF2, // set V1 to 0xF0
+		0x80, 0x17,
+	}
+
+	cpu.Load(program)
+
+	// V0 = 0xF2 (V1) - 0x01 (V0)
+	expected = 0xF1
+	if cpu.v[0] != expected {
+		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
+	}
+
+	expected = 0x0
+	if cpu.v[0xf] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
+	}
+}
+
+func Test0x8XY7WithCarry(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0xF2, // set V0 to 0x01
+		0x61, 0x02, // set V1 to 0xF0
+		0x80, 0x17,
+	}
+
+	cpu.Load(program)
+
+	expected = 0x1
+	if cpu.v[0xf] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
+	}
+}

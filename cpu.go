@@ -150,6 +150,12 @@ func (cpu *CPU) execute() error {
 		} else if cond == 0x6 {
 			cpu.v[0xF] = cpu.v[x] & 0xF
 			cpu.v[x] = cpu.v[x] >> 1
+		} else if cond == 0x7 {
+			cpu.v[x] = cpu.v[y] - cpu.v[x]
+
+			if cpu.v[x] > cpu.v[y] {
+				cpu.v[0xF] = 0x1
+			}
 		}
 	}
 
