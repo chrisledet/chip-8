@@ -71,18 +71,29 @@ func Test0x8XY2(t *testing.T) {
 
 // Set VX to (VX XOR VY)
 func Test0x8XY3(t *testing.T) {
+	var expected byte
+
 	cpu := NewCPU()
 	program := []byte{
 		0x60, 0x35, // set V0 to 0x35
-		0x61, 0x10, // set V1 to 0xF0
-		0x80, 0x13, // V0 = 0x35 | 0xF0 (0x30)
+		0x61, 0x10, // set V1 to 0x10
+		0x80, 0x13, // V0 = 0x35 XOR 0x10
+
+		0x62, 0x35, // set V2 to 0x35
+		0x63, 0x35, // set V3 to 0x35
+		0x82, 0x33, // V3 = 0x35 XOR 0x35
 	}
 
 	cpu.Load(program)
 
-	expected := byte(0x25)
+	expected = byte(0x25)
 	if cpu.v[0] != expected {
 		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
+	}
+
+	expected = byte(0x0)
+	if cpu.v[2] != expected {
+		t.Errorf("Expected V3 to be 0x%X but was 0x%X\n", expected, cpu.v[2])
 	}
 }
 

@@ -128,7 +128,11 @@ func (cpu *CPU) execute() error {
 		} else if cond == 0x2 {
 			cpu.v[x] = cpu.v[x] & cpu.v[y]
 		} else if cond == 0x3 {
-			cpu.v[x] = cpu.v[x] ^ cpu.v[y]
+			result := byte(0x0)
+			if cpu.v[x] != cpu.v[y] {
+				result = cpu.v[x] - cpu.v[y]
+			}
+			cpu.v[x] = result
 		} else if cond == 0x4 {
 			result := uint16(cpu.v[x]) + uint16(cpu.v[y])
 
