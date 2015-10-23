@@ -169,6 +169,11 @@ func Test0x8XY5(t *testing.T) {
 	if cpu.v[0] != expected {
 		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
 	}
+
+	expected = 0x0
+	if cpu.v[0xf] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
+	}
 }
 
 // 8XY5 - VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't.
