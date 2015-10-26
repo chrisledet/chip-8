@@ -174,6 +174,8 @@ func (cpu *CPU) execute() error {
 		if cpu.v[x] != cpu.v[y] {
 			cpu.pc += 2
 		}
+	case 0xB000:
+		cpu.pc = (opsval + cpu.v[0x0]) - 2
 	}
 
 	return nil
