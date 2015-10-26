@@ -167,6 +167,13 @@ func (cpu *CPU) execute() error {
 			cpu.v[0xF] = cpu.v[x] / 0x10
 			cpu.v[x] = cpu.v[x] << 1
 		}
+	case 0x9000:
+		x := cpu.memory[cpu.pc] & 0x0F
+		y := cpu.memory[cpu.pc+1] / 0x10
+
+		if cpu.v[x] != cpu.v[y] {
+			cpu.pc += 2
+		}
 	}
 
 	return nil
