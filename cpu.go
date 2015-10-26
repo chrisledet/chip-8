@@ -163,6 +163,9 @@ func (cpu *CPU) execute() error {
 			if cpu.v[x] > cpu.v[y] {
 				cpu.v[0xF] = 0x1
 			}
+		case 0xE:
+			cpu.v[0xF] = cpu.v[x] / 0x10
+			cpu.v[x] = cpu.v[x] << 1
 		}
 	}
 

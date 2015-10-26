@@ -261,3 +261,24 @@ func Test0x8XY7WithCarry(t *testing.T) {
 		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xf])
 	}
 }
+
+func Test0x8XYE(t *testing.T) {
+	var expected byte
+	cpu := NewCPU()
+	program := []byte{
+		0x60, 0x1F, // set V0 to 0x0F
+		0x80, 0x0E, // V0 << 1
+	}
+
+	cpu.Load(program)
+
+	expected = 0x3E
+	if cpu.v[0x0] != expected {
+		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0x0])
+	}
+
+	expected = 0x1
+	if cpu.v[0xF] != expected {
+		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xF])
+	}
+}
