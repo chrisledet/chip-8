@@ -121,19 +121,22 @@ func (cpu *CPU) execute() error {
 		y := cpu.memory[cpu.pc+1] / 0x10
 		cond := cpu.memory[cpu.pc+1] & 0x0F
 
-		if cond == 0x0 {
+		switch cond {
+		case 0x0:
 			cpu.v[x] = cpu.v[y]
-		} else if cond == 0x1 {
+		case 0x1:
 			cpu.v[x] = cpu.v[x] | cpu.v[y]
-		} else if cond == 0x2 {
+		case 0x2:
 			cpu.v[x] = cpu.v[x] & cpu.v[y]
-		} else if cond == 0x3 {
-			result := byte(0x0)
+		case 0x3:
+			var result byte
 			if cpu.v[x] != cpu.v[y] {
 				result = cpu.v[x] - cpu.v[y]
+			} else {
+				result = 0x0
 			}
 			cpu.v[x] = result
-		} else if cond == 0x4 {
+		case 0x4:
 			result := uint16(cpu.v[x]) + uint16(cpu.v[y])
 
 			if result > 0xFF {
@@ -141,7 +144,7 @@ func (cpu *CPU) execute() error {
 			} else {
 				cpu.v[0xF] = 0x0
 			}
-		} else if cond == 0x5 {
+		case 0x5:
 			result := int16(cpu.v[x]) - int16(cpu.v[y])
 
 			if result < 0 {
@@ -151,10 +154,10 @@ func (cpu *CPU) execute() error {
 				cpu.v[x] = byte(result)
 				cpu.v[0xF] = 0x0
 			}
-		} else if cond == 0x6 {
+		case 0x6:
 			cpu.v[0xF] = cpu.v[x] & 0xF
 			cpu.v[x] = cpu.v[x] >> 1
-		} else if cond == 0x7 {
+		case 0x7:
 			cpu.v[x] = cpu.v[y] - cpu.v[x]
 
 			if cpu.v[x] > cpu.v[y] {
