@@ -200,6 +200,8 @@ func (cpu *CPU) execute() error {
 			// ignore
 		case 0x18:
 			// ignore
+		case 0x1E:
+			cpu.i += uint16(cpu.v[x])
 		}
 	}
 

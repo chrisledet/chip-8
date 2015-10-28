@@ -16,6 +16,23 @@ func Test0xA000(t *testing.T) {
 	}
 }
 
+// Add the value stored in register VX to register I
+func Test0xFX1E(t *testing.T) {
+	cpu := NewCPU()
+	program := []byte{
+		0xA0, 0x50, // I = 0x050
+		0x61, 0xAF, // V1 = 0xAF
+		0xF1, 0x1E, // I = 0x050 + 0xAF
+	}
+
+	cpu.Load(program)
+	expected := uint16(0xFF)
+
+	if cpu.i != expected {
+		t.Errorf("Expected I to be 0x%X but was 0x%X\n", expected, cpu.i)
+	}
+}
+
 // Set VX to value of VY
 func Test0x8XY0(t *testing.T) {
 	cpu := NewCPU()
