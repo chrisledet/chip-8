@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"os"
 )
 
 const (
@@ -175,7 +177,19 @@ func (cpu *CPU) execute() error {
 			cpu.pc += 2
 		}
 	case 0xB000:
-		cpu.pc = (opsval + cpu.v[0x0]) - 2
+		cpu.pc = opsval + uint16(cpu.v[0x0]) - 2
+	case 0xF000:
+		x := cpu.memory[cpu.pc] & 0x0F
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Waiting for Input: ")
+		input, err := reader.ReadByte()
+
+		if err != nil {
+			fmt.Println("Error: %s", err.Error())
+		}
+
+		fmt.Printf("Received: 0x%X\n", input)
+		cpu.v[x] = input
 	}
 
 	return nil
