@@ -180,16 +180,27 @@ func (cpu *CPU) execute() error {
 		cpu.pc = opsval + uint16(cpu.v[0x0]) - 2
 	case 0xF000:
 		x := cpu.memory[cpu.pc] & 0x0F
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Waiting for Input: ")
-		input, err := reader.ReadByte()
+		nn := cpu.memory[cpu.pc+1]
 
-		if err != nil {
-			fmt.Println("Error: %s", err.Error())
+		switch nn {
+		case 0x07:
+			// ignore
+		case 0x0A:
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Print("Waiting for Input: ")
+			input, err := reader.ReadByte()
+
+			if err != nil {
+				return errors.New("error receiving input: " + err.Error())
+			}
+
+			fmt.Printf("Received: 0x%X\n", input)
+			cpu.v[x] = input
+		case 0x15:
+			// ignore
+		case 0x18:
+			// ignore
 		}
-
-		fmt.Printf("Received: 0x%X\n", input)
-		cpu.v[x] = input
 	}
 
 	return nil
