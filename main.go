@@ -1,8 +1,12 @@
 package main
 
+import (
+	"github.com/chrisledet/c8vm/gfx"
+)
+
 func main() {
 	cpu := NewCPU()
-	cpu.Clear()
+	cpu.window = gfx.NewWindow()
 
 	// load program
 	program := []byte{

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
+	"github.com/chrisledet/c8vm/gfx"
 )
 
 const (
@@ -30,6 +32,8 @@ type CPU struct {
 
 	delayTimer uint16
 	soundTimer uint16
+
+	window gfx.Window
 }
 
 func (cpu *CPU) Clear() {
@@ -48,10 +52,11 @@ func (cpu *CPU) Load(program []byte) error {
 		cpu.memory[StartAddress+i] = uint16(opscode)
 	}
 
-	return cpu.start()
+	cpu.start()
+	return nil
 }
 
-func (cpu *CPU) start() error {
+func (cpu *CPU) start() {
 	for {
 		err := cpu.execute()
 		if err != nil {
@@ -61,9 +66,11 @@ func (cpu *CPU) start() error {
 		cpu.pc += 2
 
 		if cpu.pc > 0xFFE {
-			return nil
+			break
 		}
 	}
+
+	cpu.window.Close()
 }
 
 func (cpu *CPU) drawSprite(x, y, length int) {
