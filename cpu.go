@@ -19,6 +19,8 @@ type CPU struct {
 	i  uint16
 	pc uint16
 
+	display Display
+
 	// 0x000-0x1FF - Chip 8 interpreter (contains font set in emu)
 	// 0x050-0x0A0 - Used for the built in 4x5 pixel font set (0-F)
 	// 0x200-0xFFF - Program ROM and work RAM
@@ -64,23 +66,42 @@ func (cpu *CPU) start() error {
 	}
 }
 
+func (cpu *CPU) drawSprite(x, y, length int) {
+	for h := 0; h < length; h++ {
+		for w := 0; w < 8; w++ {
+			fmt.Printf("cpu.memory[%d]: 0x%X\t\t", cpu.i+uint16(h), cpu.memory[cpu.i+uint16(h)])
+			fmt.Printf("(0x80 >> uint16(0x%X)\n", uint16(w))
+
+			// fmt.Printf("cpu.memory[%d]\n", cpu.i+uint16(w))
+			if cpu.memory[cpu.i+uint16(h)] > (0x80 >> uint16(w)) {
+				fmt.Printf("setting display[%d][%d] to true\n", x+w, y+h)
+				cpu.display[x+w][y+h] = true
+			}
+		}
+	}
+}
+
 func (cpu *CPU) execute() error {
 	opscode := cpu.memory[cpu.pc]<<8 | cpu.memory[cpu.pc+1]
 	opsval := opscode & 0x0FFF
 	pc := cpu.pc
 
-	if opscode == 0x00EE {
-		if cpu.sp > 0 {
-			cpu.pc = cpu.stack[cpu.sp-1]
-			cpu.sp--
-		} else {
-			return errors.New("invalid subroutine return")
-		}
-	}
-
 	switch opscode & 0xF000 {
+	case 0x0000:
+		switch cpu.memory[cpu.pc+1] {
+		case 0xEE:
+			if cpu.sp > 0 {
+				cpu.pc = cpu.stack[cpu.sp-1]
+				cpu.sp--
+			} else {
+				return errors.New("invalid subroutine return")
+			}
+		case 0xE0:
+			cpu.display.Clear()
+		}
 	case 0xA000:
 		cpu.i = opsval
+		fmt.Printf("Setting I = 0x%X\n", opsval)
 	case 0x1000:
 		cpu.pc = opsval
 	case 0x2000: // Calls subroutine at NNN.
@@ -114,6 +135,7 @@ func (cpu *CPU) execute() error {
 		x := cpu.memory[cpu.pc] & 0x0F
 		opsval = cpu.memory[cpu.pc+1]
 		cpu.v[x] = byte(opsval)
+		fmt.Printf("Setting V%X = 0x%X\n", x, opsval)
 	case 0x7000:
 		x := cpu.memory[cpu.pc] & 0x0F
 		opsval = cpu.memory[cpu.pc+1]
@@ -178,6 +200,15 @@ func (cpu *CPU) execute() error {
 		}
 	case 0xB000:
 		cpu.pc = opsval + uint16(cpu.v[0x0]) - 2
+	case 0xD000:
+		x := cpu.memory[cpu.pc] & 0x0F
+		y := cpu.memory[cpu.pc+1] / 0x10
+		n := cpu.memory[cpu.pc+1] & 0x0F
+
+		fmt.Printf("Drawing sprite at (%d, %d) for %d height\n", cpu.v[x], cpu.v[y], n)
+		cpu.drawSprite(int(cpu.v[x]), int(cpu.v[y]), int(n))
+		cpu.display.ToConsole()
+
 	case 0xF000:
 		x := cpu.memory[cpu.pc] & 0x0F
 		nn := cpu.memory[cpu.pc+1]
