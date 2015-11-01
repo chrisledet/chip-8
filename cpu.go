@@ -16,8 +16,6 @@ const (
 	RegisterCount  byte   = 0x10
 	StackSize      byte   = 0x10
 	FontAddress    uint16 = 0x50
-	Width          int    = 64
-	Height         int    = 32
 )
 
 type CPU struct {
@@ -213,12 +211,8 @@ func (cpu *CPU) execute() error {
 		posX := uint16(cpu.v[x])
 		posY := uint16(cpu.v[y])
 
-		// Draw a sprite at position VX, VY with N bytes of sprite data starting at the address stored in I
-		// Set VF to 01 if any set pixels are changed to unset, and 00 otherwise
-
 		cpu.v[0xF] = 0x0
 
-		// cpu.display[height][width]
 		for ny := uint16(0); ny < height; ny++ {
 			sprite := cpu.memory[cpu.i+ny]
 			pixels := byteToDisplay(sprite)
@@ -227,15 +221,14 @@ func (cpu *CPU) execute() error {
 				currentPosX := posX + nx
 				currentPosY := posY + ny
 
-				if currentPosX >= uint16(Width) {
-					currentPosX -= uint16(Width)
+				if currentPosX >= uint16(gfx.Width) {
+					currentPosX -= uint16(gfx.Width)
 				}
 
-				if currentPosY >= uint16(Height) {
-					currentPosY -= uint16(Height)
+				if currentPosY >= uint16(gfx.Height) {
+					currentPosY -= uint16(gfx.Height)
 				}
 
-				fmt.Printf("[%d][%d]\n", currentPosX, currentPosY)
 				currentPixel := cpu.display[currentPosX][currentPosY]
 
 				if currentPixel != pixels[nx] {
@@ -292,10 +285,10 @@ func (cpu *CPU) execute() error {
 }
 
 func NewCPU() *CPU {
-	display := make([][]bool, Width, Width)
+	display := make([][]bool, gfx.Width, gfx.Width)
 
-	for i := 0; i < Width; i++ {
-		display[i] = make([]bool, Height, Height)
+	for i := int32(0); i < gfx.Width; i++ {
+		display[i] = make([]bool, gfx.Height, gfx.Height)
 	}
 
 	cpu := CPU{
