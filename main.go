@@ -22,7 +22,8 @@ func main() {
 	}
 
 	cpu := NewCPU()
-	cpu.debug = true
+	// TODO: make this CLI flag -debug?
+	cpu.debug = false
 
 	gfxWindow := gfx.NewWindow()
 	cpu.window = gfxWindow
