@@ -9,17 +9,18 @@ import (
 )
 
 func main() {
+	romPath := os.Args[1]
+	program, err := ioutil.ReadFile(romPath)
+	if err != nil {
+		fmt.Errorf("Problem with loading rom: %s\n", err.Error())
+		os.Exit(1)
+	}
+
 	cpu := NewCPU()
 	cpu.debug = true
 
 	gfxWindow := gfx.NewWindow()
 	cpu.window = gfxWindow
-
-	program, err := ioutil.ReadFile("roms/MERLIN")
-	if err != nil {
-		fmt.Errorf("Problem with loading rom: %s\n", err.Error())
-		os.Exit(1)
-	}
 
 	cpu.Load(program)
 

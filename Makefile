@@ -21,6 +21,6 @@ build:
 
 run:
 	@echo "-> Running..."
-	@./chip-8
+	@./chip-8 roms/MERLIN
 
 .PHONY: all clean
