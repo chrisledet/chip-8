@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/chrisledet/chip-8/gfx"
+	"github.com/chrisledet/chip-8/io"
 )
 
 const (
@@ -62,6 +63,11 @@ func (cpu *CPU) start() {
 		cpu.pc += 2
 
 		if cpu.pc > 0xFFE {
+			break
+		}
+
+		event := io.Poll()
+		if event.IsQuitEvent() {
 			break
 		}
 	}
