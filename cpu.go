@@ -16,6 +16,8 @@ const (
 	RegisterCount  byte   = 0x10
 	StackSize      byte   = 0x10
 	FontAddress    uint16 = 0x50
+	Width          int    = 64
+	Height         int    = 32
 )
 
 type CPU struct {
