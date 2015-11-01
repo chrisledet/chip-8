@@ -103,12 +103,12 @@ func Test0x8XY3(t *testing.T) {
 
 	cpu.Load(program)
 
-	expected = byte(0x25)
+	expected = 0x1
 	if cpu.v[0] != expected {
 		t.Errorf("Expected V0 to be 0x%X but was 0x%X\n", expected, cpu.v[0])
 	}
 
-	expected = byte(0x0)
+	expected = 0x0
 	if cpu.v[2] != expected {
 		t.Errorf("Expected V3 to be 0x%X but was 0x%X\n", expected, cpu.v[2])
 	}
@@ -299,3 +299,39 @@ func Test0x8XYE(t *testing.T) {
 		t.Errorf("Expected VF to be 0x%X but was 0x%X\n", expected, cpu.v[0xF])
 	}
 }
+
+// To set I to the memory address of the sprite data corresponding to one of these characters,
+// a data register containing a single hexadecimal digit must be passed to the following instruction.
+func Test0xFX29(t *testing.T) {
+	cpu := NewCPU()
+	program := []byte{
+		0x61, 0x0F, // set V1 to 0xF
+		0xF1, 0x29, // set I address of font character for V1 (0xF)
+	}
+
+	cpu.Load(program)
+
+	expected := uint16(FontAddress + (0xF * 5))
+
+	if cpu.i != expected {
+		t.Errorf("Expected I to be 0x%X but was 0x%X\n", expected, cpu.i)
+	}
+}
+
+// FX65 - Fills V0 to VX with values from memory starting at address I
+// func Test0xFX65(t *testing.T) {
+// 	cpu := NewCPU()
+// 	program := []byte{
+// 		// 0xANNN
+// 		0x61, 0x0F, // set V1 to 0xF
+// 		0xF1, 0x29, // set I address of font character for V1 (0xF)
+// 	}
+
+// 	cpu.Load(program)
+
+// 	expected := uint16(FontAddress + (0xF * 5))
+
+// 	if cpu.i != expected {
+// 		t.Errorf("Expected I to be 0x%X but was 0x%X\n", expected, cpu.i)
+// 	}
+// }

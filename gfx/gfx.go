@@ -1,6 +1,10 @@
 package gfx
 
 import (
+	"fmt"
+	// "time"
+	"os"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -48,19 +52,18 @@ func (w SDLWindow) Close() {
 }
 
 func (w SDLWindow) Draw(pixels [][]bool) {
-	surface,
-		err := w.window.GetSurface()
-
+	surface, err := w.window.GetSurface()
 	if err != nil {
-		panic(err)
+		fmt.Printf("ERROR with GetSurface(): %s\n", err.Error())
+		os.Exit(1)
 	}
 
-	var x int32
-	var y int32
+	for x := int32(0); x < Width; x++ {
+		for y := int32(0); y < Height; y++ {
+			fmt.Printf("-> (%d, %d)\n", x, y)
 
-	for x = 0; x < Width; x++ {
-		for y = 0; y < Height; y++ {
 			rect := sdl.Rect{x * PixelSize, y * PixelSize, PixelSize, PixelSize}
+
 			if pixels[x][y] {
 				surface.FillRect(&rect, OnColor)
 			} else {

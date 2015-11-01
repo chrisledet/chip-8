@@ -1,8 +1,11 @@
-all: clean
-	@echo "-> Building..."
-	@go build
-	@echo "-> Running..."
-	@./c8vm
+DEPS = $(shell go list -f '{{range .TestImports}}{{.}} {{end}}' ./...)
+PACKAGES = $(shell go list ./...)
+
+all: clean deps build run
+
+deps:
+	@echo "-> Installing dependencies"
+	@go get -d -v ./... $(DEPS)
 
 test:
 	@echo "-> Testing..."
@@ -10,6 +13,14 @@ test:
 
 clean:
 	@echo "-> Cleaning..."
-	@rm -f ./c8vm
+	@rm -f ./chip-8
+
+build:
+	@echo "-> Building..."
+	@go build
+
+run:
+	@echo "-> Running..."
+	@./chip-8
 
 .PHONY: all clean
