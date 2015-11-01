@@ -53,25 +53,23 @@ func (w SDLWindow) Close() {
 func (w SDLWindow) Draw(pixelState [][]bool) {
 	surface, err := w.window.GetSurface()
 	if err != nil {
-		fmt.Printf("ERROR with GetSurface(): %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Error with getting window surface: %s\n", err.Error())
 		os.Exit(1)
 	}
 
-	var pixels []sdl.Rect
+	redraw := false
 
 	for x := int32(0); x < Width; x++ {
 		for y := int32(0); y < Height; y++ {
-			color := OffColor
-			pixel := sdl.Rect{x * PixelSize, y * PixelSize, PixelSize, PixelSize}
-			pixels = append(pixels, pixel)
-
 			if pixelState[x][y] {
-				color = OnColor
+				pixel := sdl.Rect{x * PixelSize, y * PixelSize, PixelSize, PixelSize}
+				surface.FillRect(&pixel, OnColor)
+				redraw = true
 			}
-
-			surface.FillRect(&pixel, color)
 		}
 	}
 
-	w.window.UpdateSurfaceRects(pixels)
+	if redraw {
+		w.window.UpdateSurface()
+	}
 }
