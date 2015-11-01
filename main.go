@@ -9,10 +9,15 @@ import (
 )
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "Must specify ROM file")
+		os.Exit(1)
+	}
+
 	romPath := os.Args[1]
 	program, err := ioutil.ReadFile(romPath)
 	if err != nil {
-		fmt.Errorf("Problem with loading rom: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "Problem with loading rom: %s\n", err.Error())
 		os.Exit(1)
 	}
 
