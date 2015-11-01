@@ -1,7 +1,7 @@
 DEPS = $(shell go list -f '{{range .TestImports}}{{.}} {{end}}' ./...)
 PACKAGES = $(shell go list ./...)
 
-all: clean deps build run
+all: clean deps build
 
 deps:
 	@echo "-> Installing dependencies"
@@ -19,8 +19,4 @@ build:
 	@echo "-> Building..."
 	@go build
 
-run:
-	@echo "-> Running..."
-	@./chip-8 roms/MERLIN
-
-.PHONY: all clean
+.PHONY: deps test clean build

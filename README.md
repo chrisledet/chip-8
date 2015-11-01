@@ -5,7 +5,7 @@ Still a work in progress.
 ## Build
 
 ```shell
-make build
+make
 ```
 
 ## Run
