@@ -62,7 +62,7 @@ func (w SDLWindow) Draw(pixelState [][]bool) {
 	for x := int32(0); x < Width; x++ {
 		for y := int32(0); y < Height; y++ {
 			if pixelState[x][y] {
-				pixel := sdl.Rect{x * PixelSize, y * PixelSize, PixelSize, PixelSize}
+				pixel := sdl.Rect{X: x * PixelSize, Y: y * PixelSize, W: PixelSize, H: PixelSize}
 				surface.FillRect(&pixel, OnColor)
 				redraw = true
 			}
